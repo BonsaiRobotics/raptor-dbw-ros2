@@ -52,6 +52,11 @@ from launch.substitutions import LaunchConfiguration
 from launch.substitutions import ThisLaunchFileDir
 from launch_ros.actions import Node
 
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python import get_package_share_directory
+import os
+
 
 def generate_launch_description():
     params_file = LaunchConfiguration(
@@ -62,8 +67,14 @@ def generate_launch_description():
     dbc_file_path = get_package_share_directory('raptor_dbw_can') + \
         '/launch/New_Eagle_DBW_3.4.dbc'
 
+    socketcan_receiver = os.path.join(
+        get_package_share_directory('ros2_socketcan'),
+        'launch',
+        'socket_can_receiver.launch.py'
+    )
+
     return LaunchDescription(
-        [
+        [   
             Node(
                 package='raptor_dbw_can',
                 executable='raptor_dbw_can_node',
@@ -74,12 +85,16 @@ def generate_launch_description():
                     params_file
                 ],
             ),
-            Node(
-                package='kvaser_interface',
-                executable='kvaser_can_bridge',
-                output='screen',
-                namespace='raptor_dbw_interface',
-                parameters=[params_file]),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(socketcan_receiver),
+                launch_arguments={'interface': 'can0'}.items(),
+            ),
+            # Node(
+            #     package='kvaser_interface',
+            #     executable='kvaser_can_bridge',
+            #     output='screen',
+            #     namespace='raptor_dbw_interface',
+            #     parameters=[params_file]),
         ])
 
 
