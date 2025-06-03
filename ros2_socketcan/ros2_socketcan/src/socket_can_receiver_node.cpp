@@ -73,10 +73,10 @@ LNI::CallbackReturn SocketCanReceiverNode::on_configure(const lc::State & state)
   RCLCPP_DEBUG(this->get_logger(), "Receiver successfully configured.");
 
   if (!enable_fd_) {
-    frames_pub_ = this->create_publisher<can_msgs::msg::Frame>("raptor_dbw_interface/can_tx", 500); // Original topic name: can_tx
+    frames_pub_ = this->create_publisher<can_msgs::msg::Frame>("raptor_dbw_interface/can_tx", 500); // Original topic name: from_can_bus_tx
   } else {
     fd_frames_pub_ =
-      this->create_publisher<ros2_socketcan_msgs::msg::FdFrame>("raptor_dbw_interface/can_tx_fd", 500); // Original topic name: can_tx_fd
+      this->create_publisher<ros2_socketcan_msgs::msg::FdFrame>("raptor_dbw_interface/can_tx_fd", 500); // Original topic name: from_can_bus_fd
   }
 
   receiver_thread_ = std::make_unique<std::thread>(&SocketCanReceiverNode::receive, this);

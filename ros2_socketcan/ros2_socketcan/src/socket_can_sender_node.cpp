@@ -61,12 +61,12 @@ LNI::CallbackReturn SocketCanSenderNode::on_configure(const lc::State & state)
 
   if (!enable_fd_) {
     frames_sub_ = this->create_subscription<can_msgs::msg::Frame>(
-      "raptor_dbw_interface/can_tx", 500, std::bind(&SocketCanSenderNode::on_frame, this, std::placeholders::_1)); // Original topic name: can_tx
+      "raptor_dbw_interface/can_tx", 500, std::bind(&SocketCanSenderNode::on_frame, this, std::placeholders::_1)); // Original topic name: to_can_bus
   } else {
     fd_frames_sub_ = this->create_subscription<ros2_socketcan_msgs::msg::FdFrame>(
       "raptor_dbw_interface/can_tx_fd", 500, std::bind(
         &SocketCanSenderNode::on_fd_frame, this,
-        std::placeholders::_1)); // Original topic name: can_tx_fd
+        std::placeholders::_1)); // Original topic name: to_can_bus_fd
   }
 
   return LNI::CallbackReturn::SUCCESS;
