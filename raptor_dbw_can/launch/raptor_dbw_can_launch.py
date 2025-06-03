@@ -73,6 +73,12 @@ def generate_launch_description():
         'socket_can_receiver.launch.py'
     )
 
+    socketcan_sender = os.path.join(
+        get_package_share_directory('ros2_socketcan'),
+        'launch',
+        'socket_can_sender.launch.py'
+    )
+
     return LaunchDescription(
         [   
             Node(
@@ -87,6 +93,10 @@ def generate_launch_description():
             ),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(socketcan_receiver),
+                launch_arguments={'interface': 'can0'}.items(),
+            ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(socketcan_sender),
                 launch_arguments={'interface': 'can0'}.items(),
             ),
             # Node(
