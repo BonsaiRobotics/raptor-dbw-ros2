@@ -1181,6 +1181,7 @@ void RaptorDbwCAN::recvMiscCmd(const MiscCmd::SharedPtr msg)
   message->GetSignal("AKit_HornReq")->SetResult(0);
   message->GetSignal("AKit_LowBeamReq")->SetResult(0);
   message->GetSignal("AKit_DoorLockReq")->SetResult(0);
+  message->GetSignal("AKit_PTOReq")->SetResult(0);
 
   if (enabled()) {
     message->GetSignal("AKit_TurnSignalReq")->SetResult(msg->cmd.value);
@@ -1205,6 +1206,7 @@ void RaptorDbwCAN::recvMiscCmd(const MiscCmd::SharedPtr msg)
     message->GetSignal("AKit_HornReq")->SetResult(msg->horn_cmd);
     message->GetSignal("AKit_LowBeamReq")->SetResult(msg->low_beam_cmd.status);
     message->GetSignal("AKit_DoorLockReq")->SetResult(msg->door_lock_cmd.value);
+    message->GetSignal("AKit_PTOReq")->SetResult(msg->pto_cmd ? 1 : 0);
   }
 
   message->GetSignal("AKit_OtherRollingCntr")->SetResult(msg->rolling_counter);

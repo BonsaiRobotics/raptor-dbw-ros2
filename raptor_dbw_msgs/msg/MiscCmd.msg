@@ -21,6 +21,7 @@ bool block_adaptive_cruise_buttons
 bool block_turn_signal_stalk
 
 bool horn_cmd
+bool pto_cmd
 
 LowBeam low_beam_cmd
 
