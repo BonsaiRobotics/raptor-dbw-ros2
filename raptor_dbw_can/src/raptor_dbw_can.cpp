@@ -88,7 +88,7 @@ RaptorDbwCAN::RaptorDbwCAN(
   joint_state_.name[JOINT_SR] = "steer_fr";
 
   // Set up Publishers
-  pub_can_ = this->create_publisher<Frame>("can_rx", 20);
+  pub_can_ = this->create_publisher<Frame>("can_rx", 500);
   pub_brake_ = this->create_publisher<BrakeReport>("brake_report", 20);
   pub_accel_pedal_ = this->create_publisher<AcceleratorPedalReport>(
     "accelerator_pedal_report", 20);
