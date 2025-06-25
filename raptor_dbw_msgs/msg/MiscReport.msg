@@ -9,3 +9,6 @@ bool by_wire_ready
 bool general_driver_activity
 bool comms_fault
 float32 ambient_temp # degrees-C
+bool vehicle_ready_to_drive
+bool vehicle_stopped
+uint8 rolling_counter

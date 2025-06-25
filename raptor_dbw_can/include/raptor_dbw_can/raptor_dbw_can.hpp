@@ -47,6 +47,7 @@
 #include <raptor_pdu_msgs/msg/relay_state.hpp>
 #include <raptor_dbw_msgs/msg/accelerator_pedal_cmd.hpp>
 #include <raptor_dbw_msgs/msg/accelerator_pedal_report.hpp>
+#include <raptor_dbw_msgs/msg/accelerator_pedal2_report.hpp>
 #include <raptor_dbw_msgs/msg/actuator_control_mode.hpp>
 #include <raptor_dbw_msgs/msg/brake2_report.hpp>
 #include <raptor_dbw_msgs/msg/brake_cmd.hpp>
@@ -98,6 +99,7 @@ using raptor_pdu_msgs::msg::RelayCommand;
 
 using raptor_dbw_msgs::msg::AcceleratorPedalCmd;
 using raptor_dbw_msgs::msg::AcceleratorPedalReport;
+using raptor_dbw_msgs::msg::AcceleratorPedal2Report;
 using raptor_dbw_msgs::msg::ActuatorControlMode;
 using raptor_dbw_msgs::msg::Brake2Report;
 using raptor_dbw_msgs::msg::BrakeCmd;
@@ -183,6 +185,11 @@ private:
  * \param[in] msg The message received over CAN.
  */
   void recvAccelPedalRpt(const Frame::SharedPtr msg);
+
+/** \brief Convert an Accel Pedal Report 2 received over CAN into a ROS message.
+ * \param[in] msg The message received over CAN.
+ */
+  void recvAccelPedal2Rpt(const Frame::SharedPtr msg);
 
 /** \brief Convert a Brake Report received over CAN into a ROS message.
  * \param[in] msg The message received over CAN.
@@ -507,6 +514,7 @@ private:
   rclcpp::Publisher<Bool>::SharedPtr pub_sys_enable_;
   rclcpp::Publisher<Frame>::SharedPtr pub_can_;
   rclcpp::Publisher<AcceleratorPedalReport>::SharedPtr pub_accel_pedal_;
+  rclcpp::Publisher<AcceleratorPedal2Report>::SharedPtr pub_accel_pedal_2_;
   rclcpp::Publisher<BrakeReport>::SharedPtr pub_brake_;
   rclcpp::Publisher<Brake2Report>::SharedPtr pub_brake_2_report_;
   rclcpp::Publisher<DriverInputReport>::SharedPtr pub_driver_input_;

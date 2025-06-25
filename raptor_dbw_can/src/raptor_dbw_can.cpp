@@ -92,6 +92,8 @@ RaptorDbwCAN::RaptorDbwCAN(
   pub_brake_ = this->create_publisher<BrakeReport>("brake_report", 20);
   pub_accel_pedal_ = this->create_publisher<AcceleratorPedalReport>(
     "accelerator_pedal_report", 20);
+  pub_accel_pedal_2_ = this->create_publisher<AcceleratorPedal2Report>(
+    "accelerator_pedal_2_report", 20);
   pub_steering_ =
     this->create_publisher<SteeringReport>("steering_report", 20);
   pub_gear_ = this->create_publisher<GearReport>("gear_report", 20);
@@ -275,6 +277,10 @@ void RaptorDbwCAN::recvCAN(const Frame::SharedPtr msg)
         recvExitRpt(msg);
         break;
 
+      case ID_ACCEL_PEDAL_2_REPORT:
+        recvAccelPedal2Rpt(msg);
+        break;
+
       case ID_BRAKE_CMD:
         break;
       case ID_ACCELERATOR_PEDAL_CMD:
@@ -393,6 +399,32 @@ void RaptorDbwCAN::recvAccelPedalRpt(const Frame::SharedPtr msg)
   }
 }
 
+void RaptorDbwCAN::recvAccelPedal2Rpt(const Frame::SharedPtr msg)
+{
+  NewEagle::DbcMessage * message = dbwDbc_.GetMessageById(ID_ACCEL_PEDAL_2_REPORT);
+  if (msg->dlc >= message->GetDlc()) {
+    message->SetFrame(msg);
+
+    AcceleratorPedal2Report accelPedal2Reprt;
+    accelPedal2Reprt.header.stamp = msg->header.stamp;
+    accelPedal2Reprt.speed_control_max_0 =
+      message->GetSignal("DBW_Accel2SpdCtrlMax")->GetResult();
+    accelPedal2Reprt.speed_control_min_0 =
+      message->GetSignal("DBW_Accel2SpdCtrlMin")->GetResult();
+    accelPedal2Reprt.speed_control_max_1 =
+      message->GetSignal("DBW_Accel2SpdCtrlMax2")->GetResult();
+    accelPedal2Reprt.speed_control_min_1 =
+      message->GetSignal("DBW_Accel2SpdCtrlMin2")->GetResult();
+
+    accelPedal2Reprt.unable_to_achieve_speed =
+      message->GetSignal("DBW_Accel2UnableToAchieveSpd")->GetResult() ? true : false;
+    accelPedal2Reprt.speed_cmd_out_of_range =
+      message->GetSignal("DBW_Accel2SpdCmdOutOfRange")->GetResult() ? true : false;
+
+    pub_accel_pedal_2_->publish(accelPedal2Reprt);
+  }
+}
+
 void RaptorDbwCAN::recvSteeringRpt(const Frame::SharedPtr msg)
 {
   NewEagle::DbcMessage * message = dbwDbc_.GetMessageById(ID_STEERING_REPORT);
@@ -473,6 +505,22 @@ void RaptorDbwCAN::recvGearRpt(const Frame::SharedPtr msg)
     out.trans_curr_gear = message->GetSignal("DBW_TransCurGear")->GetResult();
     out.gear_mismatch_flash =
       message->GetSignal("DBW_PrndMismatchFlash")->GetResult() ? true : false;
+
+    out.rolling_counter =
+      message->GetSignal("DBW_PrndRollingCntr")->GetResult();
+
+    out.ignore_driver =
+      message->GetSignal("DBW_PrndIgnoreDriver")->GetResult() ? true : false;
+    out.trans_hi_lo =
+      message->GetSignal("DBW_TransHiLo")->GetResult();
+    out.clutch_position =
+      message->GetSignal("DBW_TransClutchPosn")->GetResult();
+    out.clutch_sw =
+      message->GetSignal("DBW_TransClutchSw")->GetResult() ? true : false;
+    out.clutch_state =
+      message->GetSignal("DBW_TransClutchState")->GetResult();
+    out.clutch_driver_activity =
+      message->GetSignal("DBW_TransClutchDriverActivity")->GetResult();
 
     if (out.gear_mismatch_flash) {
       std::string err_msg(
@@ -710,6 +758,12 @@ void RaptorDbwCAN::recvMiscRpt(const Frame::SharedPtr msg)
       message->GetSignal("DBW_MiscAKitCommFault")->GetResult() ? true : false;
     out.ambient_temp =
       static_cast<double>(message->GetSignal("DBW_AmbientTemp")->GetResult());
+    out.vehicle_ready_to_drive =
+      message->GetSignal("DBW_VehReadyToDrive")->GetResult() ? true : false;
+    out.vehicle_stopped =
+      message->GetSignal("DBW_MiscVehicleStopped")->GetResult() ? true : false;
+    out.rolling_counter =
+      message->GetSignal("DBW_MiscRollingCntr")->GetResult();
 
     pub_misc_->publish(out);
   }
